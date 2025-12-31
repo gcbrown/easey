@@ -19,7 +19,7 @@ class EASE:
 
     def fit(self, df):
         """Fit the EASE model to user x item interactions.
-        
+
         Args:
             df: A dataframe with 3 columns: user, item, rating.
 

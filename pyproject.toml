@@ -18,3 +18,18 @@ license-files = ["LICENSE"]
 Homepage = "https://github.com/gcbrown/easey"
 Issues = "https://github.com/gcbrown/easey/issues"
 
+[tool.ruff]
+line-length = 100
+target-version = 'py314'
+
+[tool.ruff.lint]
+select = ['ALL']
+# naming, single quotes
+ignore = ['N80', 'Q000']
+
+[tool.ruff.lint.pydocstyle]
+convention = 'google'
+
+[tool.ruff.format]
+quote-style = 'single'
+skip-magic-trailing-comma = true
