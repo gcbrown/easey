@@ -1,12 +1,16 @@
 [project]
 name = "easey"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
   { name="George Brown", email="gcbrown@pm.me" },
 ]
 description = "A minimal implementation of Embarrassingly Shallow Autoencoders"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=2.0",
+    "sparse-dot-mkl>=0.9",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
