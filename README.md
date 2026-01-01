@@ -19,7 +19,7 @@ Given these two constraints, EASE is a great tool for:
 
 ## Installation
 
-EASEy depends on `sparse_dot_mkl` and `numpy`. `sparse_dot_mkl` is used for parallel computation of the gram matrix (`X^TX`), because the `scipy` implementation is single-threaded which becomes a bottleneck very quickly.
+EASEy depends on `sparse_dot_mkl` and `numpy`. `sparse_dot_mkl` is used for parallel computation of the gram matrix (`X<sup>T</sup>X`), because the `scipy` implementation is single-threaded which becomes a bottleneck very quickly.
 
 It is recommended to install `sparse_dot_mkl` with `conda` because this ensures that MKL is linked properly. If you use `conda`, you likely already have MKL installed because `numpy` is built with MKL by default.
 
