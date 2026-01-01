@@ -27,4 +27,6 @@ It is recommended to install `sparse_dot_mkl` with `conda` because this ensures 
 
 EASEy is compatible with both `pandas` and `polars` DataFrames. Technically it's compatible with any object that has array-like values accessible with index `[]` syntax, even a basic `dict`. The EASE class has two public methods - `fit` and `predict` - for training and inference respectively.
 
+EASE has only one hyperparameter, `lambda`, for L2 regularization. In the original paper, values from 200 to 1,000 were found to be optimal. Lower values lead to more long-tail recommendations at the expense of possible overfitting. Higher values lead to recommending more popular items.
+
 See `movielens_example.ipynb` for a simple training and inference example.
