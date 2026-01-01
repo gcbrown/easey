@@ -6,7 +6,7 @@ EASE is a state-of-the-art prediction model for collaborative filtering on impli
 
 ## When to use EASE and when not to use EASE
 
-EASE consistently performs near the top of recommender system benchmarks [(see live benchmark)](https://openbenchmark.github.io/BARS/Matching/leaderboard/amazonbooks_m1.html). It outperforms many more complex (deep learning / graph) approaches [(see paper)](https://arxiv.org/pdf/2203.01155).
+EASE consistently performs near the top of recommender system benchmarks [(see live benchmark)](https://openbenchmark.github.io/BARS/Matching/leaderboard/amazonbooks_m1.html). It outperforms many deep learning and graph-based approaches [(see paper)](https://arxiv.org/pdf/2203.01155).
 
 EASE is best when the number of items is small, because the most computationally complex part of training is taking the inverse of an item x item cooccurrence matrix. The good news is, this complexity is independent of the number of users or interactions.
 
@@ -19,7 +19,7 @@ Given these two constraints, EASE is a great tool for:
 
 ## Installation
 
-EASEy depends on `sparse_dot_mkl` and `numpy`. `sparse_dot_mkl` is used for parallel computation of the gram matrix (`X<sup>T</sup>X`), because the `scipy` implementation is single-threaded which becomes a bottleneck very quickly.
+EASEy depends on `sparse_dot_mkl` and `numpy`. `sparse_dot_mkl` is used for parallel computation of the gram matrix (`X^TX`), because the `scipy` implementation is single-threaded which becomes a bottleneck very quickly.
 
 It is recommended to install `sparse_dot_mkl` with `conda` because this ensures that MKL is linked properly. If you use `conda`, you likely already have MKL installed because `numpy` is built with MKL by default.
 
