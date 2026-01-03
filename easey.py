@@ -1,7 +1,7 @@
 from typing import Self
 
 import numpy as np
-from sparse_dot_mkl import csr_array, gram_matrix_mkl
+from sparse_dot_mkl import csr_array, dot_product_mkl, gram_matrix_mkl
 
 
 class EASE:
@@ -11,7 +11,7 @@ class EASE:
 
     def _get_G(self) -> np.ndarray:
         """Calculate the regularized gram matrix G = (X^T)X + λI."""
-        G = gram_matrix_mkl(self.X, dense=True)
+        G = gram_matrix_mkl(self.X).toarray()
         # gram_matrix_mkl only returns the upper triangle
         G += np.triu(G, k=1).T
 
@@ -54,7 +54,7 @@ class EASE:
         """
         # Get indexes of unique users - removes invalid or duplicate users
         user_idx = np.isin(self.U, users).nonzero()[0]
-        scores = self.X[user_idx] @ self.B
+        scores = dot_product_mkl(self.X[user_idx], self.B)
         topk = np.argpartition(scores, -k)[:, -k:]
 
         return self.DataFrame({
