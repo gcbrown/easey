@@ -10,10 +10,9 @@ authors = [
 ]
 description = "An implementation of Embarrassingly Shallow Autoencoders"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "scipy>=1.14",
-    "sparse-dot-mkl>=0.9",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -21,6 +20,9 @@ classifiers = [
 ]
 license = "MIT"
 license-files = ["LICENSE"]
+
+[project.optional-dependencies]
+mkl = ["sparse-dot-mkl>=0.9"]
 
 [project.urls]
 Homepage = "https://github.com/gcbrown/easey"
