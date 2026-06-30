@@ -1,6 +1,8 @@
 from typing import Self
 
+import narwhals as nw
 import numpy as np
+from narwhals.typing import IntoDataFrameT
 
 try:
     from sparse_dot_mkl import csr_array, dot_product_mkl, gram_matrix_mkl
@@ -30,49 +32,64 @@ class EASE:
         G[np.diag_indices_from(G)] += self.lambda_
         return G
 
-    def fit(self, df) -> Self:
+    @nw.narwhalify
+    def fit(
+        self,
+        df: nw.DataFrame,
+        user_col: str = 'user',
+        item_col: str = 'item',
+        rating_col: str = 'rating',
+    ) -> Self:
         """Fit the EASE model to user x item interactions.
 
         Args:
             df: A dataframe with 3 columns: user, item, rating.
+            user_col: Optional column name for user ID.
+            item_col: Optional column name for item ID.
+            rating_col: Optional column name for numerical rating.
 
         Returns:
             self
         """
-        # Record the dataframe type so we can use it when returning predictions
-        self.DataFrame = type(df)
         # Get unique users/items and indexes for use in the sparse interaction matrix
-        self.U, user_idx = np.unique(df['user'], return_inverse=True)
-        self.I, item_idx = np.unique(df['item'], return_inverse=True)
+        self.U, user_idx = np.unique(df[user_col], return_inverse=True)
+        self.I, item_idx = np.unique(df[item_col], return_inverse=True)
 
         # From Algorithm 1 in the EASE paper
-        self.X = csr_array((df['rating'], (user_idx, item_idx)))
+        self.X = csr_array((df[rating_col], (user_idx, item_idx)))
         G = self._get_G()
         P = np.linalg.inv(G)
         self.B = P / (-np.diag(P))
         np.fill_diagonal(self.B, 0)
         return self
 
-    def predict(self, users: np.typing.ArrayLike, k: int = 10):
+    def predict(
+        self, df: IntoDataFrameT, user_col: str = 'user', k: int = 10
+    ) -> IntoDataFrameT:
         """Predict the top-k most relevant items per user.
 
         Args:
-            users: array-like of users to be scored
+            df: DataFrame with users to be scored
+            user_col: Optional column name for user ID.
             k: predictions will be truncated to the top k
 
         Returns:
             Dataframe with 3 columns: user, item, score
         """
         # Get indexes of unique users - removes invalid or duplicate users
-        user_idx = np.isin(self.U, users).nonzero()[0]
+        user_numpy = nw.from_native(df)[user_col].to_numpy()
+        user_idx = np.isin(self.U, user_numpy).nonzero()[0]
         if using_mkl:
             scores = dot_product_mkl(self.X[user_idx], self.B)
         else:
             scores = self.X[user_idx] @ self.B
         topk = np.argpartition(scores, -k)[:, -k:]
 
-        return self.DataFrame({
-            'user': self.U[np.repeat(user_idx, k)],
-            'item': self.I[topk.flatten()],
-            'score': np.take_along_axis(scores, topk, axis=-1).flatten(),
-        })
+        return nw.from_dict(
+            {
+                'user': self.U[np.repeat(user_idx, k)],
+                'item': self.I[topk.flatten()],
+                'score': np.take_along_axis(scores, topk, axis=-1).flatten(),
+            },
+            backend=nw.get_native_namespace(df),
+        ).to_native()

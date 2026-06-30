@@ -31,14 +31,10 @@ Issues = "https://github.com/gcbrown/easey/issues"
 [tool.uv.build-backend]
 module-root = ""
 
-[tool.ruff]
-line-length = 100
-target-version = 'py314'
-
 [tool.ruff.lint]
 select = ['ALL']
-# naming, single quotes
-ignore = ['N80', 'Q000']
+# trailing comma, naming, single quotes
+ignore = ['COM812', 'N80', 'Q000']
 
 [tool.ruff.lint.pydocstyle]
 convention = 'google'
