@@ -5,7 +5,7 @@ import numpy as np
 from narwhals.typing import IntoDataFrameT
 
 try:
-    from sparse_dot_mkl import csr_array, dot_product_mkl, gram_matrix_mkl
+    from sparse_dot_mkl import csr_array, gram_matrix_mkl
 
     using_mkl = True
 except ImportError:
@@ -77,12 +77,8 @@ class EASE:
             Dataframe with 3 columns: user, item, score
         """
         # Get indexes of unique users - removes invalid or duplicate users
-        user_numpy = nw.from_native(df)[user_col].to_numpy()
-        user_idx = np.isin(self.U, user_numpy).nonzero()[0]
-        if using_mkl:
-            scores = dot_product_mkl(self.X[user_idx], self.B)
-        else:
-            scores = self.X[user_idx] @ self.B
+        user_idx = np.isin(self.U, nw.from_native(df)[user_col]).nonzero()[0]
+        scores = self.X[user_idx] @ self.B
         topk = np.argpartition(scores, -k)[:, -k:]
 
         return nw.from_dict(

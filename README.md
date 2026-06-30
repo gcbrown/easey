@@ -24,7 +24,7 @@ pip install easey       # works on all machines
 pip install easey[mkl]  # faster training and inference on Intel CPU
 ```
 
-EASEy depends on `scipy` and `numpy` for sparse and dense matrix operations.
+EASEy depends on `scipy` and `numpy` for sparse and dense matrix operations. It also depends on `narwhals` for DataFrame-agnostic operations.
 
 `sparse_dot_mkl` is an optional dependency that uses the Intel MKL library for parallel computation of the gram matrix (`X^TX`) and for faster dot products. It is generally 2-4x faster than baseline `scipy`.
 
