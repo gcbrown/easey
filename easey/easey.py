@@ -2,7 +2,7 @@ from typing import Self
 
 import narwhals as nw
 import numpy as np
-from narwhals.typing import DataFrameT
+from narwhals.typing import IntoDataFrameT
 
 try:
     from sparse_dot_mkl import csr_array, dot_product_mkl, gram_matrix_mkl
@@ -63,10 +63,9 @@ class EASE:
         np.fill_diagonal(self.B, 0)
         return self
 
-    @nw.narwhalify
     def predict(
-        self, df: DataFrameT, user_col: str = 'user', k: int = 10
-    ) -> DataFrameT:
+        self, df: IntoDataFrameT, user_col: str = 'user', k: int = 10
+    ) -> IntoDataFrameT:
         """Predict the top-k most relevant items per user.
 
         Args:
@@ -78,7 +77,8 @@ class EASE:
             Dataframe with 3 columns: user, item, score
         """
         # Get indexes of unique users - removes invalid or duplicate users
-        user_idx = np.isin(self.U, df[user_col]).nonzero()[0]
+        user_numpy = nw.from_native(df)[user_col].to_numpy()
+        user_idx = np.isin(self.U, user_numpy).nonzero()[0]
         if using_mkl:
             scores = dot_product_mkl(self.X[user_idx], self.B)
         else:
@@ -92,4 +92,4 @@ class EASE:
                 'score': np.take_along_axis(scores, topk, axis=-1).flatten(),
             },
             backend=nw.get_native_namespace(df),
-        )
+        ).to_native()
